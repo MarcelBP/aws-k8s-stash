@@ -1,0 +1,67 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: microservice
+  labels:
+    app: microservice
+spec:
+  ports:
+    - port: 80
+  selector:
+    app: microservice
+    tier: frontend
+  type: LoadBalancer
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: ms-pv-claim
+  labels:
+    app: microservice
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 20Gi
+---
+apiVersion: apps/v1 # for versions before 1.9.0 use apps/v1beta2
+kind: Deployment
+metadata:
+  name: microservice
+  labels:
+    app: microservice
+spec:
+  selector:
+    matchLabels:
+      app: microservice
+      tier: frontend
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: microservice
+        tier: frontend
+    spec:
+      containers:
+      - image: microservice:1.0-sample
+        name: microservice
+        env:
+        - name: CASSANDRA_HOST
+          value: microservice-cassandra
+        - name: DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: db-pass
+              key: password
+        ports:
+        - containerPort: 80
+          name: microservice
+        volumeMounts:
+        - name: microservice-persistent-storage
+          mountPath: /var/www/html
+      volumes:
+      - name: microservice-persistent-storage
+        persistentVolumeClaim:
+          claimName: ms-pv-claim
