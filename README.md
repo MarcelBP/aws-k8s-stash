@@ -65,6 +65,6 @@ Follow with cassandra/mongo/generic services configuration.
 
 Stop test:
 ```
-kops delete cluster --name=kops-cassandra-blog.k8s.local --state=s3://cassandra-test --yes
+kops delete cluster --name=cassandra-test.k8s.local --state=s3://cassandra-test --yes
 
 ```
