@@ -1,12 +1,13 @@
 # aws-k8s-stash
 
 Kubernetes setup
+```
 curl -LO https://github.com/kubernetes/kops/releases/download/1.8.1/kops-linux-amd64 
 sudo mv kops-linux-amd64 /usr/local/bin/kops && sudo chmod a+x /usr/local/bin/kops
 
 curl -LO https://storage.googleapis.com/kubernetes-release/release/v1.7.16/bin/linux/amd64/kubectl
 sudo mv kubectl /usr/local/bin/kubectl && sudo chmod a+x /usr/local/bin/kubectl
-
+```
 Kops and awscli (debian flavoured)
 apt-get install awscli
 
@@ -20,7 +21,7 @@ Now generate a public/private key-pair:
 ssh-keygen -f cassandra-test
 
 This key-pair is used to access the EC2 machines. Create cluster:
-
+```
 kops create cluster \
 --cloud=aws \
 --name=kops-cassandra-blog.k8s.local \
@@ -31,7 +32,7 @@ kops create cluster \
 --ssh-public-key="cassandra-test.pub" \
 --state=s3://cassandra-test \
 --node-count=6
-
+```
 Now apply the cluster definition
 kops update cluster --name=kops-cassandra-blog.k8s.local --state=s3://cassandra-test --yes
 ```
