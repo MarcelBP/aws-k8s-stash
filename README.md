@@ -9,8 +9,9 @@ curl -LO https://storage.googleapis.com/kubernetes-release/release/v1.7.16/bin/l
 sudo mv kubectl /usr/local/bin/kubectl && sudo chmod a+x /usr/local/bin/kubectl
 ```
 Kops and awscli (debian flavoured)
+```
 apt-get install awscli
-
+```
 configure AWS:
 aws configure
 
