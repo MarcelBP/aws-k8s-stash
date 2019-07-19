@@ -18,7 +18,7 @@ aws configure
 ```
 AWS bucket Kops stores the configuration of the deployment in this bucket
 ```
-aws s3api create-bucket --bucket kops-cassandra-blog --region eu-west-1 --create-bucket-configuration LocationConstraint=us-west-1
+aws s3api create-bucket --bucket cassandra-test --region eu-west-1 --create-bucket-configuration LocationConstraint=us-west-1
 ```
 Now generate a public/private key-pair:
 ```
@@ -28,7 +28,7 @@ This key-pair is used to access the EC2 machines. Create cluster:
 ```
 kops create cluster \
 --cloud=aws \
---name=kops-cassandra-blog.k8s.local \
+--name=cassandra-test.k8s.local \
 --zones=eu-west-1a,eu-west-1b,eu-west-1c \
 --master-size="t2.small" \
 --master-zones=eu-west-1a,eu-west-1b,eu-west-1c \
@@ -39,7 +39,7 @@ kops create cluster \
 ```
 Now apply the cluster definition
 ```
-kops update cluster --name=kops-cassandra-blog.k8s.local --state=s3://cassandra-test --yes
+kops update cluster --name=cassandra-test.k8s.local --state=s3://cassandra-test --yes
 ```
 ```
 #NAME               STATUS  AGE  VERSION  ZONE
