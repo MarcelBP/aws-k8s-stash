@@ -13,8 +13,9 @@ Kops and awscli (debian flavoured)
 apt-get install awscli
 ```
 configure AWS:
+```
 aws configure
-
+```
 AWS bucket Kops stores the configuration of the deployment in this bucket
 ```
 aws s3api create-bucket --bucket kops-cassandra-blog --region eu-west-1 --create-bucket-configuration LocationConstraint=us-west-1
