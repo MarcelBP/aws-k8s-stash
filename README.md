@@ -60,6 +60,11 @@ As can be seen in the output, each availability zone has two Kubernetes nodes:
  ip-172-20-94-29    Ready     1m   v1.8.7   eu-west-1b
  ip-172-20-94-34    Ready     1m   v1.8.7   eu-west-1b
 ```
-Follow with cassandra/mongo.services configuration.
+Follow with cassandra/mongo/generic services configuration.
+....
 
+Stop test:
+```
 kops delete cluster --name=kops-cassandra-blog.k8s.local --state=s3://cassandra-test --yes
+
+```
