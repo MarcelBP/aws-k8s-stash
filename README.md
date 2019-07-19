@@ -21,8 +21,9 @@ AWS bucket Kops stores the configuration of the deployment in this bucket
 aws s3api create-bucket --bucket kops-cassandra-blog --region eu-west-1 --create-bucket-configuration LocationConstraint=us-west-1
 ```
 Now generate a public/private key-pair:
+```
 ssh-keygen -f cassandra-test
-
+```
 This key-pair is used to access the EC2 machines. Create cluster:
 ```
 kops create cluster \
