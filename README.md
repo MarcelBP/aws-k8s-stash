@@ -36,21 +36,21 @@ Now apply the cluster definition
 kops update cluster --name=kops-cassandra-blog.k8s.local --state=s3://cassandra-test --yes
 
 #NAME               STATUS  AGE  VERSION  ZONE
-#ip-172-20-112-210  Ready   1m   v1.8.7   eu-west-1c
-#ip-172-20-58-140   Ready   1m   v1.8.7   eu-west-1a
-#ip-172-20-85-234   Ready   1m   v1.8.7   eu-west-1b
+# ip-172-20-112-210  Ready   1m   v1.8.7   eu-west-1c
+# ip-172-20-58-140   Ready   1m   v1.8.7   eu-west-1a
+# ip-172-20-85-234   Ready   1m   v1.8.7   eu-west-1b
 
 kubectl get no -L failure-domain.beta.kubernetes.io/zone -l kubernetes.io/role=node 
 
 As can be seen in the output, each availability zone has two Kubernetes nodes:
 
 #NAME               STATUS    AGE  VERSION  ZONE
-#ip-172-20-114-66   Ready     1m   v1.8.7   eu-west-1c
-#ip-172-20-116-132  Ready     1m   v1.8.7   eu-west-1c
-#ip-172-20-35-200   Ready     1m   v1.8.7   eu-west-1a
-#ip-172-20-42-220   Ready     1m   v1.8.7   eu-west-1a
-#ip-172-20-94-29    Ready     1m   v1.8.7   eu-west-1b
-#ip-172-20-94-34    Ready     1m   v1.8.7   eu-west-1b
+# ip-172-20-114-66   Ready     1m   v1.8.7   eu-west-1c
+# ip-172-20-116-132  Ready     1m   v1.8.7   eu-west-1c
+# ip-172-20-35-200   Ready     1m   v1.8.7   eu-west-1a
+# ip-172-20-42-220   Ready     1m   v1.8.7   eu-west-1a
+# ip-172-20-94-29    Ready     1m   v1.8.7   eu-west-1b
+# ip-172-20-94-34    Ready     1m   v1.8.7   eu-west-1b
 
 Follow with cassandra/mongo.services configuration.
 
