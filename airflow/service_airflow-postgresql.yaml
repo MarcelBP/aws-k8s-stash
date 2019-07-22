@@ -1,0 +1,24 @@
+apiVersion: v1
+kind: Service
+metadata:
+  creationTimestamp: null
+  labels:
+    app: postgresql
+    chart: postgresql-0.13.1
+    heritage: Tiller
+    release: airflow
+  name: airflow-postgresql
+  selfLink: /api/v1/namespaces/airflow/services/airflow-postgresql
+spec:
+  ports:
+  - name: postgresql
+    port: 5432
+    protocol: TCP
+    targetPort: postgresql
+  selector:
+    app: postgresql
+    release: airflow
+  sessionAffinity: None
+  type: ClusterIP
+status:
+  loadBalancer: {}

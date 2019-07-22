@@ -1,0 +1,33 @@
+apiVersion: v1
+kind: Service
+metadata:
+  creationTimestamp: null
+  labels:
+    app: dask
+    chart: dask-2.2.1
+    component: scheduler
+    heritage: Tiller
+    release: intent-penguin
+  name: intent-penguin-dask-scheduler
+  selfLink: /api/v1/namespaces/default/services/intent-penguin-dask-scheduler
+spec:
+  externalTrafficPolicy: Cluster
+  ports:
+  - name: intent-penguin-dask-scheduler
+    nodePort: 31681
+    port: 8786
+    protocol: TCP
+    targetPort: 8786
+  - name: intent-penguin-dask-webui
+    nodePort: 31167
+    port: 80
+    protocol: TCP
+    targetPort: 8787
+  selector:
+    app: dask
+    component: scheduler
+    release: intent-penguin
+  sessionAffinity: None
+  type: LoadBalancer
+status:
+  loadBalancer: {}

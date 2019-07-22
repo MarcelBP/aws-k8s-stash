@@ -1,0 +1,90 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  annotations:
+    deployment.kubernetes.io/revision: "1"
+  creationTimestamp: null
+  generation: 1
+  labels:
+    app: airflow
+    chart: airflow-3.0.5
+    component: web
+    heritage: Tiller
+    release: airflow
+  name: airflow-web
+  selfLink: /apis/extensions/v1beta1/namespaces/airflow/deployments/airflow-web
+spec:
+  minReadySeconds: 120
+  progressDeadlineSeconds: 600
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      app: airflow
+      component: web
+      release: airflow
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+    type: RollingUpdate
+  template:
+    metadata:
+      annotations:
+        checksum/config-env: d5a24d137bf90baf3fd2ed752845fef0e5647710e1260a803c9accc936929dcd
+        checksum/config-git-clone: 869635b64eaae4f6076b5bf7323470ff35bddb5c05115b419e25c45fffdd7b14
+        checksum/config-scripts: 5a535c2e23664a94c8f3e5d1f3e4c39af90b0f7627378b52981ef87c3cf26dc8
+      creationTimestamp: null
+      labels:
+        app: airflow
+        component: web
+        release: airflow
+    spec:
+      containers:
+      - args:
+        - bash
+        - -c
+        - |
+          echo 'waiting 60s...' && sleep 60 && mkdir -p /usr/local/airflow/.local/bin && export PATH=/usr/local/airflow/.local/bin:$PATH && echo 'executing webserver...' && airflow webserver
+        env:
+        - name: POSTGRES_USER
+          value: postgres
+        envFrom:
+        - configMapRef:
+            name: airflow-env
+        image: puckel/docker-airflow:1.10.3
+        imagePullPolicy: IfNotPresent
+        livenessProbe:
+          failureThreshold: 5
+          httpGet:
+            path: /health
+            port: web
+            scheme: HTTP
+          initialDelaySeconds: 360
+          periodSeconds: 60
+          successThreshold: 1
+          timeoutSeconds: 1
+        name: airflow-web
+        ports:
+        - containerPort: 8080
+          name: web
+          protocol: TCP
+        resources: {}
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+        volumeMounts:
+        - mountPath: /usr/local/scripts
+          name: scripts
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: {}
+      terminationGracePeriodSeconds: 30
+      volumes:
+      - configMap:
+          defaultMode: 493
+          name: airflow-scripts
+        name: scripts
+      - emptyDir: {}
+        name: dags-data
+status: {}

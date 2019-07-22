@@ -1,0 +1,125 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  creationTimestamp: null
+  generation: 1
+  labels:
+    app: redis
+    chart: redis-7.0.0
+    heritage: Tiller
+    release: airflow
+  name: airflow-redis-master
+  selfLink: /apis/apps/v1/namespaces/airflow/statefulsets/airflow-redis-master
+spec:
+  podManagementPolicy: OrderedReady
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      app: redis
+      release: airflow
+      role: master
+  serviceName: airflow-redis-headless
+  template:
+    metadata:
+      annotations:
+        checksum/configmap: 57a1d4e31afee73efee964ffc41e4c69e595ae2674090c8833969831b74e8dc4
+        checksum/health: 2d53c88b5ad7b8d1bbf8ea00e1dcd89ad94969f6e6dcd9b933432c68d0dfb76a
+        checksum/secret: 37892e30085da2d057c1e14fc2e266816dcd9a15a8249b24ca2846ced7ba36e0
+      creationTimestamp: null
+      labels:
+        app: redis
+        chart: redis-7.0.0
+        release: airflow
+        role: master
+    spec:
+      containers:
+      - command:
+        - /bin/bash
+        - -c
+        - "if [[ -n $REDIS_PASSWORD_FILE ]]; then\n  password_aux=`cat ${REDIS_PASSWORD_FILE}`\n
+          \ export REDIS_PASSWORD=$password_aux\nfi\nif [[ ! -f /opt/bitnami/redis/etc/master.conf
+          ]];then\n  cp /opt/bitnami/redis/mounted-etc/master.conf /opt/bitnami/redis/etc/master.conf\nfi\nif
+          [[ ! -f /opt/bitnami/redis/etc/redis.conf ]];then\n  cp /opt/bitnami/redis/mounted-etc/redis.conf
+          /opt/bitnami/redis/etc/redis.conf\nfi          \nARGS=(\"--port\" \"${REDIS_PORT}\")\nARGS+=(\"--requirepass\"
+          \"${REDIS_PASSWORD}\")\nARGS+=(\"--include\" \"/opt/bitnami/redis/etc/redis.conf\")\nARGS+=(\"--include\"
+          \"/opt/bitnami/redis/etc/master.conf\")\n/run.sh ${ARGS[@]}\n"
+        env:
+        - name: REDIS_REPLICATION_MODE
+          value: master
+        - name: REDIS_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: redis-password
+              name: airflow-redis
+        - name: REDIS_PORT
+          value: "6379"
+        image: docker.io/bitnami/redis:4.0.14
+        imagePullPolicy: Always
+        livenessProbe:
+          exec:
+            command:
+            - sh
+            - -c
+            - /health/ping_local.sh 5
+          failureThreshold: 5
+          initialDelaySeconds: 5
+          periodSeconds: 5
+          successThreshold: 1
+          timeoutSeconds: 5
+        name: airflow-redis
+        ports:
+        - containerPort: 6379
+          name: redis
+          protocol: TCP
+        readinessProbe:
+          exec:
+            command:
+            - sh
+            - -c
+            - /health/ping_local.sh 5
+          failureThreshold: 5
+          initialDelaySeconds: 5
+          periodSeconds: 5
+          successThreshold: 1
+          timeoutSeconds: 1
+        resources: {}
+        securityContext:
+          procMount: Default
+          runAsUser: 1001
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+        volumeMounts:
+        - mountPath: /health
+          name: health
+        - mountPath: /data
+          name: redis-data
+        - mountPath: /opt/bitnami/redis/mounted-etc
+          name: config
+        - mountPath: /opt/bitnami/redis/etc/
+          name: redis-tmp-conf
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext:
+        fsGroup: 1001
+      serviceAccount: default
+      serviceAccountName: default
+      terminationGracePeriodSeconds: 30
+      volumes:
+      - configMap:
+          defaultMode: 493
+          name: airflow-redis-health
+        name: health
+      - configMap:
+          defaultMode: 420
+          name: airflow-redis
+        name: config
+      - emptyDir: {}
+        name: redis-data
+      - emptyDir: {}
+        name: redis-tmp-conf
+  updateStrategy:
+    type: RollingUpdate
+status:
+  replicas: 0

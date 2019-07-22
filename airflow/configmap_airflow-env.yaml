@@ -1,0 +1,32 @@
+apiVersion: v1
+data:
+  AIRFLOW__CELERY__CELERY_CONCURRENCY: "1"
+  AIRFLOW__CELERY__FLOWER_URL_PREFIX: ""
+  AIRFLOW__CELERY__WORKER_CONCURRENCY: "1"
+  AIRFLOW__CODE__ENABLE_XCOM_PICKLING: "false"
+  AIRFLOW__CORE__BASE_LOG_FOLDER: /usr/local/airflow/logs
+  AIRFLOW__CORE__DAG_PROCESSOR_MANAGER_LOG_LOCATION: /usr/local/airflow/logs/dag_processor_manager/dag_processor_manager.log
+  AIRFLOW__CORE__DAGS_FOLDER: /usr/local/airflow/dags
+  AIRFLOW__CORE__DONOT_PICKLE: "false"
+  AIRFLOW__SCHEDULER__CHILD_PROCESS_LOG_DIRECTORY: /usr/local/airflow/logs/scheduler
+  AIRFLOW__WEBSERVER__BASE_URL: http://localhost:8080
+  DO_WAIT_INITDB: "false"
+  EXECUTOR: Celery
+  FERNET_KEY: ""
+  FLOWER_PORT: "5555"
+  POSTGRES_DB: airflow
+  POSTGRES_HOST: airflow-postgresql
+  POSTGRES_PORT: "5432"
+  REDIS_HOST: airflow-redis-master
+  REDIS_PORT: ""
+  TZ: Etc/UTC
+kind: ConfigMap
+metadata:
+  creationTimestamp: null
+  labels:
+    app: airflow
+    chart: airflow-3.0.5
+    heritage: Tiller
+    release: airflow
+  name: airflow-env
+  selfLink: /api/v1/namespaces/airflow/configmaps/airflow-env

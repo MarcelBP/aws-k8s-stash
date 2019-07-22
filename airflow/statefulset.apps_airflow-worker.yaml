@@ -1,0 +1,78 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  creationTimestamp: null
+  generation: 1
+  labels:
+    app: airflow
+    chart: airflow-3.0.5
+    component: worker
+    heritage: Tiller
+    release: airflow
+  name: airflow-worker
+  selfLink: /apis/apps/v1/namespaces/airflow/statefulsets/airflow-worker
+spec:
+  podManagementPolicy: Parallel
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      app: airflow
+      component: worker
+      release: airflow
+  serviceName: airflow-worker
+  template:
+    metadata:
+      annotations:
+        checksum/config-env: d5a24d137bf90baf3fd2ed752845fef0e5647710e1260a803c9accc936929dcd
+        checksum/config-git-clone: 869635b64eaae4f6076b5bf7323470ff35bddb5c05115b419e25c45fffdd7b14
+        checksum/config-scripts: 5a535c2e23664a94c8f3e5d1f3e4c39af90b0f7627378b52981ef87c3cf26dc8
+      creationTimestamp: null
+      labels:
+        app: airflow
+        component: worker
+        release: airflow
+    spec:
+      containers:
+      - args:
+        - bash
+        - -c
+        - |
+          echo 'waiting 60s...' && sleep 60 && mkdir -p /usr/local/airflow/.local/bin && export PATH=/usr/local/airflow/.local/bin:$PATH && echo 'executing worker...' && airflow worker
+        env:
+        - name: POSTGRES_USER
+          value: postgres
+        envFrom:
+        - configMapRef:
+            name: airflow-env
+        image: puckel/docker-airflow:1.10.3
+        imagePullPolicy: IfNotPresent
+        name: airflow-worker
+        ports:
+        - containerPort: 8793
+          name: wlog
+          protocol: TCP
+        resources: {}
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+        volumeMounts:
+        - mountPath: /usr/local/scripts
+          name: scripts
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: {}
+      serviceAccount: airflow
+      serviceAccountName: airflow
+      terminationGracePeriodSeconds: 30
+      volumes:
+      - configMap:
+          defaultMode: 493
+          name: airflow-scripts
+        name: scripts
+      - emptyDir: {}
+        name: dags-data
+  updateStrategy:
+    type: RollingUpdate
+status:
+  replicas: 0

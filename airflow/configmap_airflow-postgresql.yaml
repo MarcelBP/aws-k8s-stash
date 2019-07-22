@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  creationTimestamp: null
+  labels:
+    app: postgresql
+    chart: postgresql-0.13.1
+    heritage: Tiller
+    release: airflow
+  name: airflow-postgresql
+  selfLink: /api/v1/namespaces/airflow/configmaps/airflow-postgresql
